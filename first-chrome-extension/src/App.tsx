@@ -2,14 +2,18 @@
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { useState } from 'react'
 
 function App() {
+
+  const [color, setColor ] = useState('')
   const onclick = async () => {
     let [tab] = await chrome.tabs.query({ active: true, currentWindow:true });
-    chrome.scripting.executeScript({
+    chrome.scripting.executeScript<string[], void> ({
       target: {tabId: tab.id!},
-      func: () => {
-        alert('Hello from my extension!');
+      args: [color],
+      func: (color) => {
+        document.body.style.backgroundColor = color;
       }
     })
   }
@@ -26,7 +30,8 @@ function App() {
       </div>
       <h1>Gaurang's first chrome extension</h1>
       <div className="card">
-        <button onClick = {() => {onclick}}>
+        <input type="color" name="color" id="color" onChange = {(e) => setColor(e.currentTarget.value)}/>
+        <button onClick = {onclick}>
           Click me
         </button>
         <p>
